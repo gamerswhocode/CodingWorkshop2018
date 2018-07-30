@@ -74,12 +74,38 @@ public class Player : MonoBehaviour {
 	}
 
     // Update is called once per frame
-    void Update() {
+    void Update()
+    {
 
         if (ActorState == CharacterState.Jumping
             || ActorState == CharacterState.JumpAttack)
             CheckIfGrounded();
 
+        EvalMovement();
+
+        if (IsGoingToAttack())
+        {
+            ProcessAttack();
+        }
+        else if (IsGoingToJump())
+        {
+            ExecuteJump();
+        }
+    }
+
+    private bool IsGoingToAttack()
+    {
+        return Input.GetButtonDown("Fire1") && !CurrentlyAttacking();
+    }
+
+    private bool IsGoingToJump()
+    {
+        return Input.GetButtonDown("Jump") && ActorState != CharacterState.Jumping &&
+                    !CurrentlyAttacking();
+    }
+
+    private void EvalMovement()
+    {
         if (!CurrentlyAttacking())
         {
 
@@ -88,23 +114,12 @@ public class Player : MonoBehaviour {
 
             if ((directionX > 0 && !LookingRight) ||
             directionX < 0 && LookingRight)
-            { 
+            {
                 gameObject.FlipCharacter();
             }
             this.transform.position += (new Vector3(
                 directionX, 0, directionZ
                 ) * Time.deltaTime * MoveSpeed);
-        }
-        if (Input.GetButtonDown("Fire1") && !CurrentlyAttacking())
-        {
-            ProcessAttack();
-            
-        }
-
-        else if (Input.GetButtonDown("Jump") && ActorState != CharacterState.Jumping &&
-            !CurrentlyAttacking())
-        {
-            ExecuteJump();
         }
     }
 
