@@ -1,0 +1,2 @@
+C:\GWC\CodingWorkshop2018\Parte-4\obj\Debug\Assembly-CSharp.csprojAssemblyReference.cache
+C:\GWC\CodingWorkshop2018\Parte-4\obj\Debug\Assembly-CSharp.csproj.CoreCompileInputs.cache
