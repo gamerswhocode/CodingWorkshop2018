@@ -1,6 +1,4 @@
-﻿using System.Collections;
-
-public interface IState 
+﻿public interface IState 
 {
     void Enter();
 

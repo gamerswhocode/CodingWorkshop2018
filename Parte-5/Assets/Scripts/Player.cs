@@ -34,17 +34,17 @@ public class Player : ActorCore {
         Punch = new PunchState(playerAnimator, actorAnimations.ActorAttacking,
             DonePunching);
         Idle = new IdleState(playerAnimator, actorAnimations.ActorIdle);
-        stateMachine.ChangeState(Idle);
+        Grounded = new GroundedState();
+        Jump = new JumpState(this.GetComponent<Collider>(), 
+            this.GetComponent<Rigidbody>(), JumpSpeed, EvalJumpData);
+        actionState.ChangeState(Idle);
+        movementState.ChangeState(Grounded);
     }
 
     // Update is called once per frame
     void Update()
     {
-        stateMachine.ExecuteStateUpdate();
-        if (ActorState == CharacterState.Jumping
-            || ActorState == CharacterState.JumpAttack)
-            CheckIfGrounded();
-
+        actionState.ExecuteStateUpdate();
         EvalMovement();
 
         if (IsGoingToAttack())
@@ -57,35 +57,33 @@ public class Player : ActorCore {
         }
     }
 
+    public void EvalJumpData(JumpResults results)
+    {
+        foreach (var c in results.CollidedWith)
+        {
+            if (c.gameObject.layer == LayerMask.NameToLayer("Scenario"))
+            {
+                movementState.ChangeState(Grounded);
+            }
+            //else if collided with wall or object, figure out what to do.
+        }
+    }
+
     public void DonePunching(PunchResults results)
     {
-        Debug.Log("Done punching");
-        stateMachine.SwitchToPreviousState();
+        actionState.SwitchToPreviousState();
     }
 
     void ProcessAttack()
     {
-        if (ActorState == CharacterState.Jumping)
-            ExecuteAirAttack();
-        else
+        //if (ActorState == CharacterState.Jumping)
+        //    ExecuteAirAttack();
+        //else
         {
-            stateMachine.ChangeState(Punch);
+            actionState.ChangeState(Punch);
         }
     }
 
-    void ExecutePunch()
-    {
-        ActorState = CharacterState.Attacking;
-        this.GetComponent<Animator>().Play(actorAnimations.ActorAttacking.name, -1, 0f);
-        StartCoroutine(FinishAttackIn(actorAnimations.ActorAttacking.length));
-    }
-
-    IEnumerator FinishAttackIn(float time)
-    {
-        yield return new WaitForSeconds(time);
-        ActorState = CharacterState.Idle;
-        this.GetComponent<Animator>().Play(actorAnimations.ActorIdle.name, -1, 0f);
-    }
     private bool IsGoingToAttack()
     {
         return Input.GetButtonDown("Fire1") && !CurrentlyAttacking();
@@ -93,7 +91,8 @@ public class Player : ActorCore {
 
     private bool IsGoingToJump()
     {
-        return Input.GetButtonDown("Jump") && ActorState != CharacterState.Jumping &&
+        return Input.GetButtonDown("Jump") &&
+                    //ActorState != CharacterState.Jumping &&
                     !CurrentlyAttacking();
     }
 
@@ -118,21 +117,13 @@ public class Player : ActorCore {
 
     public bool CurrentlyAttacking()
     {
-        return ActorState == CharacterState.JumpAttack ||
-            ActorState == CharacterState.Attacking;
-    }
-
-    void ExecuteAirAttack()
-    {
-        ActorState = CharacterState.JumpAttack;
-        this.GetComponent<Rigidbody>().AddForce(
-            new Vector3(LookingRight ? 50f : -50f, -50f) * 20f);
+        return actionState.GetCurrentlyRunningState()
+            == Punch.GetType();
     }
 
     void ExecuteJump()
     {
-        this.GetComponent<Rigidbody>().AddForce(Vector3.up * JumpSpeed);
-        ActorState = CharacterState.Jumping;
+        movementState.ChangeState(Jump);
     }
 
     private void KnockbackPlayer(GameObject hitBy)

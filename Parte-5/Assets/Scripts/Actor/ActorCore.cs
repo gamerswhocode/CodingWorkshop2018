@@ -20,8 +20,6 @@ public abstract class ActorCore : MonoBehaviour, IDamageManagement
 {
     [Space(20)]
     [Header("Actor States")]
-    [SerializeField]
-    protected CharacterState ActorState;
     protected bool LookingRight;
     private int AirbornCheckFrame;
     [SerializeField]
@@ -31,19 +29,14 @@ public abstract class ActorCore : MonoBehaviour, IDamageManagement
     internal ActorAnimations actorAnimations;
 
     [SerializeField]
-    protected StateMachine stateMachine;
+    protected StateMachine actionState;
+    protected StateMachine movementState;
 
     protected IdleState Idle;
+    protected JumpState Jump;
+    protected GroundedState Grounded;
 
-    protected enum CharacterState
-    {
-        Idle,
-        Attacking,
-        Jumping,
-        JumpAttack,
-        Damage,
-        Dead
-    }
+
 
     [Space(20)]
     [Header("Player Attributes")]
@@ -58,13 +51,13 @@ public abstract class ActorCore : MonoBehaviour, IDamageManagement
 
     internal virtual void Awake()
     {
-        stateMachine = new StateMachine();
+        actionState = new StateMachine();
+        movementState = new StateMachine();
     }
 
     // Use this for initialization
     void Start()
     {
-        ActorState = CharacterState.Idle;
         AirbornCheckFrame = 10;
         LookingRight = true;
         ActorHealth = MaxHealth;
@@ -99,29 +92,8 @@ public abstract class ActorCore : MonoBehaviour, IDamageManagement
 
     private void FixedUpdate()
     {
-        stateMachine.ExecuteStateFixedUpdate();
+        actionState.ExecuteStateFixedUpdate();
         LookingRight = gameObject.transform.eulerAngles.y == 0;
-    }
-
-    internal void CheckIfGrounded()
-    {
-        if (AirbornCheckFrame <= 0)
-        {
-            var bottomCollider = this.GetComponent<Collider>();
-            Collider[] col = Physics.OverlapBox(bottomCollider.bounds.center, bottomCollider.bounds.extents, bottomCollider.transform.rotation);
-            foreach (var c in col)
-            {
-                if (c.gameObject.layer == LayerMask.NameToLayer("Scenario"))
-                {
-                    ActorState = CharacterState.Idle;
-                    AirbornCheckFrame = 10;
-                }
-            }
-        }
-        else
-        {
-            AirbornCheckFrame--;
-        }
     }
 }
 

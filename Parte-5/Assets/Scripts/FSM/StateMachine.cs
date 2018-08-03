@@ -36,4 +36,9 @@ public class StateMachine
         CurrentState = PreviousState;
         CurrentState.Enter();
     }
+
+    public System.Type GetCurrentlyRunningState()
+    {
+        return CurrentState.GetType();
+    }
 }
