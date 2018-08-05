@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 
 public class StateMachine
 {
@@ -40,5 +41,10 @@ public class StateMachine
     public System.Type GetCurrentlyRunningState()
     {
         return CurrentState.GetType();
+    }
+
+    internal void ChangeState(object knockback)
+    {
+        throw new NotImplementedException();
     }
 }

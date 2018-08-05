@@ -20,15 +20,11 @@ public abstract class ActorCore : MonoBehaviour, IDamageManagement
 {
     [Space(20)]
     [Header("Actor States")]
-    protected bool LookingRight;
-    private int AirbornCheckFrame;
     [SerializeField]
     private bool CurrentlyInvulnerable;
 
     [SerializeField]
     internal ActorAnimations actorAnimations;
-
-    [SerializeField]
     protected StateMachine actionState;
     protected StateMachine movementState;
 
@@ -36,10 +32,13 @@ public abstract class ActorCore : MonoBehaviour, IDamageManagement
     protected JumpState Jump;
     protected GroundedState Grounded;
 
+    public string CurrentAction;
+    public string CurrentMovement;
+
 
 
     [Space(20)]
-    [Header("Player Attributes")]
+    [Header("Actor Attributes")]
     [Range(0, 100)]
     public int MaxHealth;
     [SerializeField]
@@ -58,8 +57,6 @@ public abstract class ActorCore : MonoBehaviour, IDamageManagement
     // Use this for initialization
     void Start()
     {
-        AirbornCheckFrame = 10;
-        LookingRight = true;
         ActorHealth = MaxHealth;
         CurrentlyInvulnerable = false;
     }
@@ -93,7 +90,12 @@ public abstract class ActorCore : MonoBehaviour, IDamageManagement
     private void FixedUpdate()
     {
         actionState.ExecuteStateFixedUpdate();
-        LookingRight = gameObject.transform.eulerAngles.y == 0;
+        movementState.ExecuteStateFixedUpdate();
+    }
+
+    public bool ActorLookingRight()
+    {
+        return gameObject.transform.eulerAngles.y == 0;
     }
 }
 
@@ -132,6 +134,8 @@ public static class ActorExtednedMethods
         var rigidBody = MyObject.GetComponent<Rigidbody>();
         if (rigidBody != null)
         {
+            rigidBody.velocity = Vector3.zero;
+            rigidBody.angularVelocity = Vector3.zero;
             rigidBody.AddForce(KnockBack, ForceMode.Impulse);
         }
     }

@@ -26,17 +26,24 @@ public class Player : ActorCore {
     [Space(20)]
     [Header("Player States")]
     PunchState Punch;
+    DiveKickState DiveKick;
+    KnockbackState Knockback;
+
 
     internal override void Awake()
     {
         base.Awake();
         var playerAnimator = GetComponent<Animator>();
+        var playerRigidBody = GetComponent<Rigidbody>();
+        var playerCollider = GetComponent<Collider>();
         Punch = new PunchState(playerAnimator, actorAnimations.ActorAttacking,
             DonePunching);
         Idle = new IdleState(playerAnimator, actorAnimations.ActorIdle);
         Grounded = new GroundedState();
-        Jump = new JumpState(this.GetComponent<Collider>(), 
-            this.GetComponent<Rigidbody>(), JumpSpeed, EvalJumpData);
+        Jump = new JumpState(playerCollider, 
+           playerRigidBody , JumpSpeed, EvalJumpData);
+        DiveKick = new DiveKickState(playerRigidBody, 20f, ActorLookingRight);
+        Knockback = new KnockbackState(playerCollider, 5f, ActorLookingRight, EvalKnockbackResult);
         actionState.ChangeState(Idle);
         movementState.ChangeState(Grounded);
     }
@@ -44,7 +51,12 @@ public class Player : ActorCore {
     // Update is called once per frame
     void Update()
     {
-        actionState.ExecuteStateUpdate();
+        UpdateStates();
+        EvalInputPriority();
+    }
+
+    private void EvalInputPriority()
+    {
         EvalMovement();
 
         if (IsGoingToAttack())
@@ -57,6 +69,15 @@ public class Player : ActorCore {
         }
     }
 
+    private void UpdateStates()
+    {
+        CurrentAction = actionState.GetCurrentlyRunningState().Name;
+        CurrentMovement = movementState.GetCurrentlyRunningState().Name;
+        actionState.ExecuteStateUpdate();
+        movementState.ExecuteStateUpdate();
+    }
+
+
     public void EvalJumpData(JumpResults results)
     {
         foreach (var c in results.CollidedWith)
@@ -64,6 +85,7 @@ public class Player : ActorCore {
             if (c.gameObject.layer == LayerMask.NameToLayer("Scenario"))
             {
                 movementState.ChangeState(Grounded);
+                actionState.ChangeState(Idle);
             }
             //else if collided with wall or object, figure out what to do.
         }
@@ -76,9 +98,13 @@ public class Player : ActorCore {
 
     void ProcessAttack()
     {
-        //if (ActorState == CharacterState.Jumping)
-        //    ExecuteAirAttack();
-        //else
+        if (movementState.GetCurrentlyRunningState() == Jump.GetType())
+        {
+            var playerBody = GetComponent<Rigidbody>();
+            if(playerBody != null)
+                actionState.ChangeState(DiveKick);
+        }
+        else
         {
             actionState.ChangeState(Punch);
         }
@@ -86,26 +112,28 @@ public class Player : ActorCore {
 
     private bool IsGoingToAttack()
     {
-        return Input.GetButtonDown("Fire1") && !CurrentlyAttacking();
+        return Input.GetButtonDown("Fire1") && !CurrentlyAttacking()
+            && PlayerCanMove();
     }
 
     private bool IsGoingToJump()
     {
         return Input.GetButtonDown("Jump") &&
-                    //ActorState != CharacterState.Jumping &&
-                    !CurrentlyAttacking();
+                    movementState.GetCurrentlyRunningState() != Jump.GetType() &&
+                    !CurrentlyAttacking() &&
+                    PlayerCanMove();
     }
 
     private void EvalMovement()
     {
-        if (!CurrentlyAttacking())
+        if (!CurrentlyAttacking() && PlayerCanMove())
         {
 
             var directionX = Input.GetAxis("Horizontal");
             var directionZ = Input.GetAxis("Vertical");
 
-            if ((directionX > 0 && !LookingRight) ||
-            directionX < 0 && LookingRight)
+            if ((directionX > 0 && !ActorLookingRight()) ||
+            directionX < 0 && ActorLookingRight())
             {
                 gameObject.FlipCharacter();
             }
@@ -118,7 +146,13 @@ public class Player : ActorCore {
     public bool CurrentlyAttacking()
     {
         return actionState.GetCurrentlyRunningState()
-            == Punch.GetType();
+            == Punch.GetType() ||
+            actionState.GetCurrentlyRunningState() == DiveKick.GetType();
+    }
+
+    public bool PlayerCanMove()
+    {
+        return movementState.GetCurrentlyRunningState() != Knockback.GetType();
     }
 
     void ExecuteJump()
@@ -130,6 +164,19 @@ public class Player : ActorCore {
     {
         StartCoroutine(BecomeInvulnerable(1.5f));
         this.gameObject.KnockBackObject(hitBy, new Vector3(10f, 3f));
+        movementState.ChangeState(Knockback);
+    }
+
+    public void EvalKnockbackResult(KnockbackResultData results)
+    {
+        foreach (var c in results.CollidedWith)
+        {
+            if (c.gameObject.layer == LayerMask.NameToLayer("Scenario"))
+            {
+                movementState.ChangeState(Grounded);
+                actionState.ChangeState(Idle);
+            }
+        }
     }
 
     private void OnTriggerEnter(Collider other)

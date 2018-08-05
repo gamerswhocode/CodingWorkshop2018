@@ -26,7 +26,6 @@ public class PunchState : IState
 
     public void Execute()
     {
-        Debug.Log("Execute Punch");
         if (PlayTime < AnimationDuration)
         {
             PlayTime += 1 * Time.deltaTime;

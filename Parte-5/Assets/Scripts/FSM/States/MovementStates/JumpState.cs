@@ -20,8 +20,8 @@ public class JumpState : IState
 
     public void Enter()
     {
-        AirbornCheckFrame = 5;
-        
+        AirbornCheckFrame = 15;
+        ObjectRigidBody.AddForce(Vector3.up * JumpVelocity);
     }
 
     public void Execute()
