@@ -23,6 +23,8 @@ GameObject:
   - component: {fileID: 23046847085360640}
   - component: {fileID: 135790508025414364}
   - component: {fileID: 54501177194946780}
+  - component: {fileID: 114462349937581900}
+  - component: {fileID: 95037436812716722}
   m_Layer: 0
   m_Name: Grenade
   m_TagString: Untagged
@@ -100,6 +102,39 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!95 &95037436812716722
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1725938964996252}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: f42ede037ebed064285ee131e2beea45, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!114 &114462349937581900
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1725938964996252}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 07c01c5e51fec7b4cbc03db8419fa446, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  IdleAnimation: {fileID: 7400000, guid: 70b57a5ab7be52c45846031dff4f6d94, type: 2}
+  ExplosionAnimation: {fileID: 7400000, guid: 5a03931a475b56d48a036092b71d43b1, type: 2}
+  actionState: 
+  movementState: 
 --- !u!135 &135790508025414364
 SphereCollider:
   m_ObjectHideFlags: 1

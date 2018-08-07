@@ -66,26 +66,29 @@
     <Compile Include="Assets\Scripts\Extensions\ActorExtensions.cs" />
     <Compile Include="Assets\Scripts\FSM\IState.cs" />
     <Compile Include="Assets\Scripts\FSM\StateMachine.cs" />
+    <Compile Include="Assets\Scripts\FSM\States\ActionStates\DeathState.cs" />
     <Compile Include="Assets\Scripts\FSM\States\ActionStates\DiveKickState.cs" />
     <Compile Include="Assets\Scripts\FSM\States\ActionStates\IdleState.cs" />
     <Compile Include="Assets\Scripts\FSM\States\ActionStates\MovementState.cs" />
     <Compile Include="Assets\Scripts\FSM\States\ActionStates\ProyectileState.cs" />
     <Compile Include="Assets\Scripts\FSM\States\ActionStates\PunchState.cs" />
+    <Compile Include="Assets\Scripts\FSM\States\IThrowable.cs" />
+    <Compile Include="Assets\Scripts\FSM\States\MovementStates\AirbornState.cs" />
     <Compile Include="Assets\Scripts\FSM\States\MovementStates\GroundedState.cs" />
-    <Compile Include="Assets\Scripts\FSM\States\MovementStates\JumpState.cs" />
     <Compile Include="Assets\Scripts\FSM\States\MovementStates\Knockback.cs" />
+    <Compile Include="Assets\Scripts\Objects\Grenade.cs" />
     <Compile Include="Assets\Scripts\Player.cs" />
     <Reference Include="UnityEditor.StandardEvents">
-      <HintPath>C:/GWC/CodingWorkshop2018/Parte-6/Library/ScriptAssemblies/UnityEditor.StandardEvents.dll</HintPath>
+      <HintPath>C:/GWC/Workshop Unity/CodingWorkshop2018/Parte-6/Library/ScriptAssemblies/UnityEditor.StandardEvents.dll</HintPath>
     </Reference>
     <Reference Include="Unity.TextMeshPro.Editor">
-      <HintPath>C:/GWC/CodingWorkshop2018/Parte-6/Library/ScriptAssemblies/Unity.TextMeshPro.Editor.dll</HintPath>
+      <HintPath>C:/GWC/Workshop Unity/CodingWorkshop2018/Parte-6/Library/ScriptAssemblies/Unity.TextMeshPro.Editor.dll</HintPath>
     </Reference>
     <Reference Include="Unity.PackageManagerUI.Editor">
-      <HintPath>C:/GWC/CodingWorkshop2018/Parte-6/Library/ScriptAssemblies/Unity.PackageManagerUI.Editor.dll</HintPath>
+      <HintPath>C:/GWC/Workshop Unity/CodingWorkshop2018/Parte-6/Library/ScriptAssemblies/Unity.PackageManagerUI.Editor.dll</HintPath>
     </Reference>
     <Reference Include="Unity.TextMeshPro">
-      <HintPath>C:/GWC/CodingWorkshop2018/Parte-6/Library/ScriptAssemblies/Unity.TextMeshPro.dll</HintPath>
+      <HintPath>C:/GWC/Workshop Unity/CodingWorkshop2018/Parte-6/Library/ScriptAssemblies/Unity.TextMeshPro.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.AIModule">
       <HintPath>C:/Program Files/Unity/Editor/Data/Managed/UnityEngine/UnityEngine.AIModule.dll</HintPath>

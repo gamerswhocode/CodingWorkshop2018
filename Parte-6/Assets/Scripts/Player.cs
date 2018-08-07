@@ -51,7 +51,7 @@ public class Player : ActorCore {
             DonePunching);
         Idle = new IdleState(playerAnimator, actorAnimations.ActorIdle);
         Grounded = new GroundedState();
-        Jump = new JumpState(playerCollider, 
+        Jump = new AirbornState(playerCollider, 
            playerRigidBody , JumpSpeed, EvalJumpData);
         DiveKick = new DiveKickState(playerRigidBody, 20f, ActorLookingRight);
         Knockback = new KnockbackState(playerCollider, 5f, ActorLookingRight, EvalKnockbackResult);
@@ -91,6 +91,12 @@ public class Player : ActorCore {
         var throwableObject =Instantiate(ProyectilePrefab);
         this.gameObject.ThrowObject(GetProyectileStartingPosition(),
             throwableObject, ActorLookingRight(), ThrowForce);
+
+        var throwComponent = throwableObject.GetComponent<IThrowable>();
+        throwComponent.InitializeVariables();
+        throwComponent.ThrowObject();
+        
+
     }
 
     private Vector3 GetProyectileStartingPosition()

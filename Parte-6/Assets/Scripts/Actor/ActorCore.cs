@@ -31,7 +31,7 @@ public abstract class ActorCore : MonoBehaviour, IDamageManagement
     protected StateMachine movementState;
 
     protected IdleState Idle;
-    protected JumpState Jump;
+    protected AirbornState Jump;
     protected GroundedState Grounded;
 
     public string CurrentAction;
@@ -83,9 +83,8 @@ public abstract class ActorCore : MonoBehaviour, IDamageManagement
         CurrentlyInvulnerable = false;
     }
 
-    private bool DetermineIfDead()
+    internal bool DetermineIfDead()
     {
-        Debug.Log(ActorHealth);
         return ActorHealth <= 0;
     }
 
