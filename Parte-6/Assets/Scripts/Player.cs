@@ -32,13 +32,15 @@ public class Player : ActorCore {
 
     [Header("Proyectile Data")]
     [SerializeField]
-    GameObject ProyectilePrefab;
+    Grenade ProyectilePrefab;
     [SerializeField]
     ProyectileState Proyectile;
     [SerializeField]
     Vector3 ProyectileLaunchOffset;
     [SerializeField]
     Vector3 ThrowForce;
+
+    Pool GrenadePool;
 
 
     internal override void Awake()
@@ -58,6 +60,11 @@ public class Player : ActorCore {
         Proyectile = new ProyectileState(DoneProyectileAttack, actorAnimations.ActorProyectile, playerAnimator);
         actionState.ChangeState(Idle);
         movementState.ChangeState(Grounded);
+    }
+
+    private void Start()
+    {
+            GrenadePool = Pool.GetPool(ProyectilePrefab);
     }
 
     // Update is called once per frame
@@ -88,15 +95,16 @@ public class Player : ActorCore {
     private void ExecuteProyectileAttack()
     {
         actionState.ChangeState(Proyectile);
-        var throwableObject =Instantiate(ProyectilePrefab);
-        this.gameObject.ThrowObject(GetProyectileStartingPosition(),
-            throwableObject, ActorLookingRight(), ThrowForce);
 
-        var throwComponent = throwableObject.GetComponent<IThrowable>();
+        var projectile = GrenadePool.Get(transform.position, Quaternion.identity) as Grenade;
+        //var throwableObject = Instantiate(ProyectilePrefab);
+
+        this.gameObject.ThrowObject(GetProyectileStartingPosition(),
+            projectile.gameObject, ActorLookingRight(), ThrowForce);
+
+        var throwComponent = projectile.GetComponent<IThrowable>();
         throwComponent.InitializeVariables();
         throwComponent.ThrowObject();
-        
-
     }
 
     private Vector3 GetProyectileStartingPosition()

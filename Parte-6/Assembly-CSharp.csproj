@@ -78,6 +78,8 @@
     <Compile Include="Assets\Scripts\FSM\States\MovementStates\Knockback.cs" />
     <Compile Include="Assets\Scripts\Objects\Grenade.cs" />
     <Compile Include="Assets\Scripts\Player.cs" />
+    <Compile Include="Assets\Scripts\Pool\IPoolable.cs" />
+    <Compile Include="Assets\Scripts\Pool\Pool.cs" />
     <Reference Include="UnityEditor.StandardEvents">
       <HintPath>C:/GWC/Workshop Unity/CodingWorkshop2018/Parte-6/Library/ScriptAssemblies/UnityEditor.StandardEvents.dll</HintPath>
     </Reference>

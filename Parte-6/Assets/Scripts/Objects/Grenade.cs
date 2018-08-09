@@ -1,7 +1,8 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 
-public class Grenade : MonoBehaviour, IThrowable
+public class Grenade : MonoBehaviour, IThrowable, IPoolable
 {
 
     StateMachine _movementState;
@@ -24,10 +25,18 @@ public class Grenade : MonoBehaviour, IThrowable
     GroundedState _grounded;
     DeathState _death;
 
+    public event Action OnDestroyEvent;
 
     private void Awake()
     {
         InitializeVariables();
+    }
+
+  
+
+    private void OnDisable()
+    {
+        OnDestroyEvent();
     }
 
     void Update()
@@ -96,8 +105,7 @@ public class Grenade : MonoBehaviour, IThrowable
 
     public void PostMortermResult()
     {
-        //TODO : postmorterm logic, throw back to the pool
-        Destroy(this.gameObject);
+        this.gameObject.SetActive(false);
     }
 }
 
